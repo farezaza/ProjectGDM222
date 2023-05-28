@@ -1,40 +1,46 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NoteObject : MonoBehaviour
 {
     public bool canBePressed;
-    public KeyCode KeyToPress;
+    public GameObject hitEffects;
+
+    public UnityEngine.UI.Button noteButton;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        noteButton.onClick.AddListener(OnNoteButtonClick);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyToPress))
-        {
-            if(canBePressed)
-            {
-                gameObject.SetActive(false);
+        // No need for update logic since we are using button click events
+    }
 
-                GameManager.instance.NoteHit();
-            }
+    private void OnNoteButtonClick()
+    {
+        if (canBePressed)
+        {
+
+            GameManager.instance.NoteHit();
+            Instantiate(hitEffects, transform.position, hitEffects.transform.rotation);
+            gameObject.SetActive(false);
         }
     }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.tag == "Activator")
+        if (other.tag == "Activator")
         {
             canBePressed = true;
         }
     }
+
     private void OnTriggerExit2D(Collider2D other)
     {
-        if(other.tag == "Activator"&& gameObject.activeSelf)
+        if (other.tag == "Activator" && gameObject.activeSelf)
         {
             canBePressed = false;
             GameManager.instance.NoteMisses();
